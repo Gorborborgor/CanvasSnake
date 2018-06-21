@@ -5,6 +5,10 @@ let selectSize = document.getElementById("select1");
 let fieldSize = selectSize.value;
 let directions = [0,0,1,0];
 let snake = [];
+let previousKeyKode = 39;
+let possibl = true;
+let apple = {};
+
 function setPlayground(someSize){
     canvas.style.width = someSize + "px";
     canvas.style.height = someSize + "px";
@@ -15,16 +19,18 @@ function setPlayground(someSize){
 setPlayground(fieldSize);
 
 function field(someSize){
-    let ourSize = someSize;
-    let axisX = ourSize/10;
-    let axisY = ourSize/10;
-    for(let i = 0; i < axisY; i++) {
+    for(let i = 0; i < someSize/10; i++) {
         mas[i] = [];
-        for (let j = 0; j < axisX; j++) {
-            mas[i][j] = 0;
+        for (let j = 0; j < someSize/10; j++) {
+            if(i == 0 || i == someSize/10-1) {
+                mas[i][j] = 9;
+            } else if(j == 0 || j == someSize/10-1) {
+                mas[i][j] = 9;
+            } else {
+                mas[i][j] =0;
+            }
         }
     }
-    console.log(axisX);
 }
 
 field(fieldSize);
@@ -33,13 +39,20 @@ function createSnake (someValue) {
     let center = (someValue/10/2);
     mas[center][center] = 1;
     snake[0] = {
-        id: 0,
         xCoord: center,
         yCoord: center
     }
 }
 
 createSnake(fieldSize);
+
+function randomizeApple (someValue) {
+    apple.yAppleCoord = Math.floor(Math.random() * ((someValue/10-1) - 1)) + 1;
+    apple.xAppleCoord = Math.floor(Math.random() * ((someValue/10-1) - 1)) + 1;
+    mas[apple.yAppleCoord][apple.xAppleCoord] = 3;
+}
+
+randomizeApple(fieldSize);
 
 function drawRight(someValue) {
     for(let i = 0; i < someValue/10; i++) {
@@ -114,25 +127,42 @@ document.getElementById("start").onclick = function startSnake() {
         directions = [0, 0, 1, 0];
         return;
     }
-    console.log("one more turn");
-    console.log(snake[0].xCoord);
-    console.log(snake[0].yCoord);
+    
     document.body.onkeydown = function catchDirecton (event) {
-        if(event.keyCode == 37) {directions = [1,0,0,0]};// Двигаемся влево
-        if(event.keyCode == 38) {directions = [0,1,0,0]};// Двигаемся вверх
-        if(event.keyCode == 39) {directions = [0,0,1,0]};// Двигаемся вправо
-        if(event.keyCode == 40) {directions = [0,0,0,1]};// Двигаемся вниз
+        if(event.keyCode == 37 && previousKeyKode != 39) {
+            directions = [1,0,0,0]; previousKeyKode = 37;
+        } else if(event.keyCode == 37 && previousKeyKode == 39) {
+            directions = [0,0,1,0];
+        } // Двигаемся влево если до этого не двигались вправо. Если же двигались то продолжаем двигаться
+        if(event.keyCode == 38 && previousKeyKode != 40) {
+            directions = [0,1,0,0]; previousKeyKode = 38;
+        } else if(event.keyCode == 38 && previousKeyKode == 40) {
+            directions = [0,0,0,1];
+        }// Двигаемся вверх
+        if(event.keyCode == 39 && previousKeyKode != 37) {
+            directions = [0,0,1,0]; previousKeyKode = 39;
+        } else if(event.keyCode == 39 && previousKeyKode == 37) {
+            directions = [1,0,0,0];
+        }// Двигаемся вправо
+        if(event.keyCode == 40 && previousKeyKode != 38) {
+            directions = [0,0,0,1]; previousKeyKode = 40;
+        } else if(event.keyCode == 40 && previousKeyKode == 38) {
+            directions = [0,1,0,0];
+        }// Двигаемся вниз
     };
     moveSnake(fieldSize);
-    if (snake[0].xCoord == fieldSize/10 || snake[0].xCoord == -1 || snake[0].yCoord == (fieldSize/10)-1 || snake[0].yCoord == 0) {
-        mas[fieldSize/10/2][fieldSize/10/2] = 1;
-        checkAndDraw(fieldSize);
-        alert("you died");
+    //граничные условия
+    if(snake[0].yCoord == fieldSize/10-1 || snake[0].yCoord == 0 || snake[0].xCoord == fieldSize/10-1 || snake[0].xCoord == 0) {
+        createSnake(fieldSize);
+        alert("gameover");
         return;
     }
-    setTimeout(startSnake, 1000);
-    checkAndDraw(fieldSize);
     
+    if(snake[0].yCoord == apple.yAppleCoord && snake[0].xCoord == apple.xAppleCoord){
+        randomizeApple(fieldSize);
+    }
+    checkAndDraw(fieldSize);
+    setTimeout(startSnake, 200);
 };
 
 function checkAndDraw (someValue) {
@@ -141,7 +171,7 @@ function checkAndDraw (someValue) {
         for (let j = 0; j < someValue/10; j++) {
             if(mas[i][j] == 0) {
                 ctx.beginPath();
-                ctx.strokeStyle = "black";
+                ctx.strokeStyle = "rgb(255, 255, 255)";
                 ctx.rect(j * 10, i * 10, 10, 10);
                 ctx.closePath();
                 ctx.stroke();
@@ -159,6 +189,13 @@ function checkAndDraw (someValue) {
                 ctx.fillRect(j * 10, i * 10, 10, 10);
                 ctx.closePath();
                 ctx.stroke();
+            } else if(mas[i][j] == 9) {
+                ctx.clearRect(j * 10, i * 10, 10, 10);
+                ctx.beginPath();
+                ctx.fillStyle = "#d8cece";
+                ctx.fillRect(j * 10, i * 10, 10, 10);
+                ctx.closePath();
+                ctx.stroke();
             }
         }
     }
@@ -173,4 +210,5 @@ selectSize.onchange = function() {
     createSnake(fieldSize);
     checkAndDraw(fieldSize);
     directions = [];
+    randomizeApple(fieldSize);
 };
