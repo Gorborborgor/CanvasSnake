@@ -1,10 +1,246 @@
-#c1 {
-    width: 200px;
-    height:200px;
-/*    border: 0px solid black;*/
-    margin: 40px;
+* {
+    margin: 0;
+    padding: 0;
 }
 
-#logo {
-    
+.header {
+    display: flex;
+    width: 100%;
+    height: 100px;
+    background-color: #247e1d;
+}
+
+.title {
+    margin: auto;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #e8e8e8;
+}
+.control-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: 700px;
+    height: 150px;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+    height: 100%;
+}
+
+.speed-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    height: 100%;
+}
+
+.size-container {
+    display: flex;
+    width: 40%;
+    height: 100%;
+    position: relative;
+}
+
+.canvas-container{
+    display: flex;
+    height: 420px;
+    width: 420px;
+}
+
+.start-button{
+    border: none;
+    outline: none;
+    width: 100px;
+    height: 100px;
+    background-color: #0c9d00;
+    box-shadow: inset 0px 0px 5px 5px rgba(36, 126, 29, 0.52);
+    color: white;
+    border-radius: 20%;
+    font-size: 25px;
+}
+
+.start-button:hover {
+    box-shadow: inset 0px 0px 10px 10px rgba(36, 126, 29, 0.52);
+}
+
+.start-button:active {
+    box-shadow: inset 0px 0px 15px 15px rgba(36, 126, 29, 0.52);
+    font-size: 20px;
+}
+
+.speed {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 95%;
+    height: 2px;
+    background: #050a04;
+}
+
+.speed:hover {
+    background-color: #82db67;
+}
+
+.speed:focus {
+    outline: none;
+    background-color: #82db67;
+}
+
+.speed::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.speed::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.speed-info {
+    display: none;
+    position: absolute;
+    top: 18%;
+    left: ;
+    width: 115px;
+    background-color: #309eff;
+    border-radius: 10px;
+    padding: 5px;
+    box-sizing: border-box;
+    text-align: center;
+}
+.speed-info::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -7px;
+    border-width: 7px;
+    border-style: solid;
+    border-color: #2785d8 transparent transparent transparent;
+}
+
+.speed-container::before {
+    content: "Choose difficulty";
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    text-align: center;
+    color:#838383;
+}
+
+.size-select {
+    background-color: #c7c7c7;
+    padding: 5px;
+    width: 95%;
+    height: 20%;
+    margin: auto;
+    box-sizing: border-box;
+}
+
+.size-container::before {
+    content: "Choose size";
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    text-align: center;
+    color:#838383;
+}
+
+.canvas {
+    width: 220px;
+    height:220px;
+    margin: auto;
+}
+
+.gameover-screen {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+}
+.gameover-container {
+    width: 400px;
+    height: 200px;
+    background-color: #8d1717;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.gameover-text {
+    font-size: 40px;
+    margin-top: 70px;
+}
+
+.stats {
+    padding: 15px;
+    display: block;
+}
+
+.close-gameover {
+    width: 400px;
+    height: 50px;
+    background-color: #247e1d;
+    border-radius: 10px;
+    text-align: center;
+    padding: 13px;
+    box-sizing: border-box;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.close-gameover:hover {
+    background-color: #2ca123;
+}
+
+.desrc-container {
+    position: absolute;
+    width: 400px;
+    background-color: rgba(78, 78, 78, 0.65);
+    border-radius: 10px;
+    top: 80%;
+    color: #000000;
+}
+
+.description {
+    padding: 5px;
+    text-align: center
+}
+
+.link {
+    text-decoration: none;
+    color: #6d6d6d;
+}
+
+.link:hover {
+    color:#b4b4b4;
+}
+
+.link:active {
+    color: #38ea68;
 }

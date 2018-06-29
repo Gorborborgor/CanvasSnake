@@ -6,22 +6,44 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="control-panel"><p id="logo">SNAKE</p>
-        <button id="start">Start</button>
-        <select name="" id="select1">
-            <option value="220">200 на 200</option>
-            <option value="320">300 на 300</option>
-            <option value="420">400 на 400</option>
-            <option value="520">500 на 500</option>
-            <option value="620">600 на 600</option>
-        </select>
-        <select name="" id="select2">
-            <option value="" id="complexity1">easy</option>
-            <option value="" id="complexity2">medium</option>
-            <option value="" id="complexity3">hard</option>
-        </select>
+    <header class="header">
+        <h1 class="title">CanvasSnake</h1>
+    </header>
+    <div class="control-panel">
+        <div class="container speed-container">
+            <input type="range" min="1" max="5" value="3" class="speed">
+            <div class="speed-info">Normal </div>
+        </div>
+        <div class="container button-container">
+            <button class="start-button">Start</button>
+        </div>
+        <div class="container size-container">
+            <select name="" class="size-select">
+                <option value="220">20 на 20</option>
+                <option value="320">30 на 30</option>
+                <option value="420">40 на 40</option>
+            </select>
+        </div>
     </div>
-    <canvas id="c1" width="200" height="200"></canvas>
+    <div class="container canvas-container">
+        <canvas class="canvas" width="200" height="200"></canvas>
+    </div>
+    <div class="gameover-screen">
+        <div class="gameover-container">
+            <p class="gameover-text">GAME OVER</p>
+            <p class="stats">
+                Snake length: <span class="text snakelength"></span><br>
+                Points: <span class=" text points"></span>
+            </p>
+        </div>
+        <div class="close-gameover">NEW GAME</div>
+        <div class="desrc-container">
+            <div class="description">Made by Stepanov</div>
+            <div class="description">Non-commercial project, made in order to improve my JS skills</div>
+            <div class="description"><a href="https://github.com/Gorborborgor/CanvasSnake" class="link">More info on my Github Repo</a></div>
+            <div class="description">Last update: 06.29.2018</div>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
