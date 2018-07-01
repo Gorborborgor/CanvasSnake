@@ -1,10 +1,7 @@
-// ДОБАВИТЬ ВЫБОР СЛОЖНОСТИ-----------------------DONE
-// РЕКУРСНУТЬ РАНДОМАЙЗЕР-------------------------DONE
-// ДОБАВИТЬ НЕПРОНИЦАЕМОСТЬ ХВОСТА----------------DONE
-// РАЗУКРАСИТЬ И ПРИУКРАСИТЬ----------------------DONE
-// ДОБАВИТЬ ОКНО ПРОИГРЫША------------------------DONE
-// ДОБАВИТЬ СБОР СТАТИСТИКИ
-// ПОПРАВИТЬ БАГ С ПРЕРЫВАНИЕМ--------------------DONE
+// Змейка представлена в виде массива объектов, каждый из которых это отдельный блок, имеющий
+// текущие и предыдущие координаты по иксу и игреку. В качестве поля действия используем двухмерный массив,
+// в ячейки которого заносим разные значения для змейки, яблок, границ. В конце концов перебираем массив и 
+// по-разному отрисовываем эти значения с помощью канваса
 
 let canvas = document.querySelector(".canvas"),
     ctx = canvas.getContext("2d"),
@@ -18,8 +15,11 @@ let canvas = document.querySelector(".canvas"),
     apple = {},
     speed = document.querySelector(".speed"),
     speedValue = 150,
-    speedInfo = document.querySelector(".speed-info");
+    speedInfo = document.querySelector(".speed-info"),
+    lengthValue = 1,
+    points = 0;
 
+// код для отображения сложности по наведению
 speed.onmousedown = () => {
     speedInfo.style.display = "block";
 }
@@ -32,6 +32,8 @@ speed.onmouseup = () => {
 speed.onmouseout = () => {
     speedInfo.style.display = "none";
 }
+
+// определяем скорость движения змейки и показываем сложность
 
 function setSpeed() {
     speed.oninput = function() {
@@ -61,6 +63,7 @@ function setSpeed() {
 
 setSpeed();
 
+// устанавливаем размер канваса
 
 function setPlayground(someSize){
     canvas.style.width = someSize + "px";
@@ -70,6 +73,8 @@ function setPlayground(someSize){
 }
 
 setPlayground(fieldSize);
+
+// создаем двухмерный массив, куда будем записывать значения ячеек и по разному их отрисовывать
 
 function field(someSize){
     for(let i = 0; i < someSize/10; i++) {
@@ -87,6 +92,9 @@ function field(someSize){
 }
 
 field(fieldSize);
+
+// конструктор для змейки, каждый объект имеет четыре значения - координаты, а также два метода-
+// один рисует блок, второй стирает его с прошлого места
 
 class SnakeBlock {
     constructor(yCoord, xCoord) {
@@ -123,6 +131,8 @@ class SnakeBlock {
     }
 }
 
+// создаем змейку, расположенную в центре поля и состоящую из одного, головного блока.
+
 function createSnake (someValue) {
     let center = (someValue/10/2)-1;
     snake = [];
@@ -132,9 +142,47 @@ function createSnake (someValue) {
 
 createSnake(fieldSize);
 
+// добавляем блоки в змейку и насчитываем очки
+let initialTime;
+
+function countPoints () {
+    if(snake.length == 1) {
+        initialTime = new Date;
+        initialTime = initialTime.getTime();
+        console.error(initialTime);
+        return;
+    }
+    let newTime = new Date;
+    newTime = newTime.getTime();
+    let difference = newTime - initialTime;
+    console.log(difference);
+    
+    lengthValue++;
+    let newPoints = 10;
+    
+    if (difference < 1000) {
+        newPoints *= 2;
+    } else if(difference < 2500) {
+        newPoints *= 1.5;
+    } else if(difference < 5000) {
+        newPoints *= 1.25;
+    } else if(difference > 10000) {
+        newPoints *= 0.75;
+    }
+    points += newPoints;
+    
+    initialTime = new Date;
+    initialTime = initialTime.getTime();
+}
+
 function addSnakeBlock(y,x) {
     snake[snake.length] = new SnakeBlock(y,x);
+
+    countPoints();
 }
+
+// Определяем направление движения и перерисовываем головной блок. Потом перебираем все остальные
+// блоки, если они есть и последовательно перерисовываем их на старое место предыдущего блока
 
 function moveSnake (someValue) {
     if (directions[0] == 1) {
@@ -161,6 +209,8 @@ function moveSnake (someValue) {
 
 moveSnake();
 
+// На случайном месте создаем яблоко.
+
 function randomizeApple(someValue) {
     apple.yAppleCoord = Math.floor(Math.random() * ((someValue/10-1) - 1)) + 1;
     apple.xAppleCoord = Math.floor(Math.random() * ((someValue/10-1) - 1)) + 1;
@@ -174,13 +224,26 @@ function randomizeApple(someValue) {
 
 randomizeApple(fieldSize);
 
+// Главная функция-обработчик. По нажатию на кнопку старт запускает змейку, следит за направлением,
+// при этом не разрешая двигаться в противоположную сторону. Так же задает условия.
+
+let checker = true;
+
 document.querySelector(".start-button").onclick = function startSnake() {
+    
+    // вызвать CountPoints разрешаем только один раз, в дальнейшем она будет вызываться при поедании яблока
+    
+    if(checker) {
+        countPoints();
+        checker = false;
+    }
+    
     if (directions[0] == undefined) {
         directions = [0, 0, 1, 0];
         return;
     }
     
-    let checkerDirection = true; // дает определить направление движения только один раз за такт, что защищает от "переклацывания" в противоположную сторону
+    let checkerDirection = true; // дает определить направление движения только один раз за такт
     document.body.onkeydown = function catchDirecton (event) {
         if(!checkerDirection){
             return;
@@ -216,6 +279,7 @@ document.querySelector(".start-button").onclick = function startSnake() {
         checkAndDraw(fieldSize);
         directions = [0, 0, 1, 0];
         showGameover();
+        statsCollector();
         return;
     }
 //ЕДИМ ЯБЛОКИ И РАНДОМАЙЗИМ НОВЫЕ
@@ -232,12 +296,15 @@ document.querySelector(".start-button").onclick = function startSnake() {
             checkAndDraw(fieldSize);
             directions = [0, 0, 1, 0];
             showGameover();
+            statsCollector();
             return;
         }
     }
     checkAndDraw(fieldSize);
     setTimeout(startSnake, speedValue);
 };
+
+// перебираем массив и превращаем значения в разноцветные кубики
 
 function checkAndDraw (someValue) {
     ctx.clearRect(0, 0, someValue, someValue);
@@ -277,6 +344,8 @@ function checkAndDraw (someValue) {
 
 checkAndDraw(fieldSize);
 
+// функция-обработчик, по изменению размеров игрового поля, пересоздает все для игры
+
 selectSize.onchange = function() {
     fieldSize = selectSize.value;
     setPlayground(fieldSize);
@@ -290,13 +359,20 @@ selectSize.onchange = function() {
 // ПОДСЧЕТ ОЧКОВ И ЭКРАН "GAME OVER"
 
 let spanForLength = document.querySelector(".snakelength");
-
+let spanForPoints = document.querySelector(".points");
 let gameoverScreen = document.querySelector(".gameover-screen");
 
 function showGameover () {
     gameoverScreen.style.display = "flex";
-    spanForLength.innerHTML = snake.length;
 }
+
+function statsCollector () {
+    spanForLength.innerHTML = lengthValue;
+    lengthValue = 1;
+    spanForPoints.innerHTML = points;
+    points = 0;
+}
+
 document.querySelector(".close-gameover").onclick = ()=> {
     gameoverScreen.style.display = "none";
 }

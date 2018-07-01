@@ -12,6 +12,8 @@
 
 .title {
     margin: auto;
+font-family: 'Concert One', cursive;
+    font-size: 45px;
 }
 
 body {
@@ -19,6 +21,8 @@ body {
     flex-direction: column;
     align-items: center;
     background-color: #e8e8e8;
+    font-family: 'Roboto', sans-serif;
+
 }
 .control-panel {
     display: flex;
@@ -194,12 +198,14 @@ body {
 
 .gameover-text {
     font-size: 40px;
+    font-weight: 900;
     margin-top: 70px;
 }
 
 .stats {
     padding: 15px;
     display: block;
+    line-height: 30px;
 }
 
 .close-gameover {
@@ -211,6 +217,7 @@ body {
     padding: 13px;
     box-sizing: border-box;
     font-size: 20px;
+    font-weight: 700;
     cursor: pointer;
 }
 
@@ -225,6 +232,7 @@ body {
     border-radius: 10px;
     top: 80%;
     color: #000000;
+    font-size:  13px;
 }
 
 .description {
