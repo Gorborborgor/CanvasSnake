@@ -242,13 +242,13 @@ body {
 
 .link {
     text-decoration: none;
-    color: #6d6d6d;
+    color: #4CAF50;
 }
 
 .link:hover {
-    color:#b4b4b4;
+    color:#14ff1d;
 }
 
 .link:active {
-    color: #38ea68;
+    color: #fbfffc;
 }

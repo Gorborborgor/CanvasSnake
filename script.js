@@ -1,62 +1,43 @@
 // Змейка представлена в виде массива объектов, каждый из которых это отдельный блок, имеющий
-// текущие и предыдущие координаты по иксу и игреку. В качестве поля действия используем двухмерный массив,
+// текущие и предыдущие координаты по иксу и игреку. В качестве поля действия используем двумерный массив,
 // в ячейки которого заносим разные значения для змейки, яблок, границ. В конце концов перебираем массив и 
 // по-разному отрисовываем эти значения с помощью канваса
 
-let canvas = document.querySelector(".canvas"),
-    ctx = canvas.getContext("2d"),
+let canvas = document.querySelector('.canvas'),
+    ctx = canvas.getContext('2d'),
     mas = [],
-    selectSize = document.querySelector(".size-select"),
+    selectSize = document.querySelector('.size-select'),
     fieldSize = selectSize.value,
     directions = [0,0,1,0],
     snake = [],
     previousKeyKode = 39,
-    possibl = true,
     apple = {},
-    speed = document.querySelector(".speed"),
+    speed = document.querySelector('.speed'),
     speedValue = 150,
-    speedInfo = document.querySelector(".speed-info"),
+    speedInfo = document.querySelector('.speed-info'),
     lengthValue = 1,
     points = 0;
 
 // код для отображения сложности по наведению
-speed.onmousedown = () => {
-    speedInfo.style.display = "block";
-}
-speed.onmouseover = () => {
-    speedInfo.style.display = "block";
-}
-speed.onmouseup = () => {
-    speedInfo.style.display = "none";
-}
-speed.onmouseout = () => {
-    speedInfo.style.display = "none";
-}
+
+speed.onmouseenter = () => speedInfo.style.display = 'block'
+speed.onmouseleave = () => speedInfo.style.display = 'none'
 
 // определяем скорость движения змейки и показываем сложность
 
 function setSpeed() {
+    function applySpeed(value, info, style){
+        speedValue = value;
+        speedInfo.innerHTML = info;
+        speedInfo.style.left = style;
+    }
     speed.oninput = function() {
-        if(speed.value == 1) {
-            speedValue =20;
-            speedInfo.innerHTML = "UltraMegaHard";
-            speedInfo.style.left = -15.5 + "%";
-        } else if(speed.value == 2) {
-            speedValue = 50;
-            speedInfo.innerHTML = "Hard";
-            speedInfo.style.left = 7 + "%";
-        } else if(speed.value == 3) {
-            speedValue = 150;
-            speedInfo.innerHTML = "Normal";
-            speedInfo.style.left = 29.5 + "%";
-        } else if(speed.value == 4) {
-            speedValue = 250;
-            speedInfo.innerHTML = "Easy";
-            speedInfo.style.left = 52 + "%";
-        } else if(speed.value == 5) {
-            speedValue = 500;
-            speedInfo.innerHTML = "SuperDuperEasy";
-            speedInfo.style.left = 74 + "%";
+        switch(+speed.value) {
+            case 1: applySpeed(20, 'UltraMegaHard', (-15.5 + '%')); break;
+            case 2: applySpeed(50, 'Hard', (7 + '%')); break;
+            case 3: applySpeed(150, 'Normal', (29.5 + '%')); break;
+            case 4: applySpeed(250, 'Easy', (52 + '%')); break;
+            case 5: applySpeed(500, 'SuperDuperEasy', (74 + '%')); break;
         }
     }
 }
@@ -66,8 +47,8 @@ setSpeed();
 // устанавливаем размер канваса
 
 function setPlayground(someSize){
-    canvas.style.width = someSize + "px";
-    canvas.style.height = someSize + "px";
+    canvas.style.width = someSize + 'px';
+    canvas.style.height = someSize + 'px';
     canvas.width = someSize;
     canvas.height = someSize;
 }
@@ -80,9 +61,9 @@ function field(someSize){
     for(let i = 0; i < someSize/10; i++) {
         mas[i] = [];
         for (let j = 0; j < someSize/10; j++) {
-            if(i == 0 || i == someSize/10-1) {
+            if(i === 0 || i === someSize/10-1) {
                 mas[i][j] = 9;
-            } else if(j == 0 || j == someSize/10-1) {
+            } else if(j === 0 || j === someSize/10-1) {
                 mas[i][j] = 9;
             } else {
                 mas[i][j] =0;
@@ -146,16 +127,14 @@ createSnake(fieldSize);
 let initialTime;
 
 function countPoints () {
-    if(snake.length == 1) {
+    if(snake.length === 1) {
         initialTime = new Date;
         initialTime = initialTime.getTime();
-        console.error(initialTime);
         return;
     }
     let newTime = new Date;
     newTime = newTime.getTime();
     let difference = newTime - initialTime;
-    console.log(difference);
     
     lengthValue++;
     let newPoints = 10;
@@ -177,7 +156,6 @@ function countPoints () {
 
 function addSnakeBlock(y,x) {
     snake[snake.length] = new SnakeBlock(y,x);
-
     countPoints();
 }
 
@@ -185,13 +163,13 @@ function addSnakeBlock(y,x) {
 // блоки, если они есть и последовательно перерисовываем их на старое место предыдущего блока
 
 function moveSnake (someValue) {
-    if (directions[0] == 1) {
+    if (directions[0] === 1) {
         snake[0].moveLeft();
-    } else if (directions[1] == 1) {
+    } else if (directions[1] === 1) {
         snake[0].moveUp();
-    } else if (directions[2] == 1) {
+    } else if (directions[2] === 1) {
         snake[0].moveRight();
-    } else if (directions[3] == 1) {
+    } else if (directions[3] === 1) {
         snake[0].moveDown();
     }
     
@@ -203,8 +181,8 @@ function moveSnake (someValue) {
             snake[i].yCoord = snake[i-1].yPrevCoord;
         }
     }
-    snake.forEach(block => {block.wipeOut();})
-    snake.forEach(block => {block.draw();})
+    snake.forEach(block => block.wipeOut())
+    snake.forEach(block => block.draw())
 }
 
 moveSnake();
@@ -212,25 +190,29 @@ moveSnake();
 // На случайном месте создаем яблоко.
 
 function randomizeApple(someValue) {
-    apple.yAppleCoord = Math.floor(Math.random() * ((someValue/10-1) - 1)) + 1;
-    apple.xAppleCoord = Math.floor(Math.random() * ((someValue/10-1) - 1)) + 1;
-    for(let i = 1; i < snake.length; i++) {
-        if(apple.xAppleCoord == snake[i].xCoord || apple.yAppleCoord == snake[i].yCoord){
-            randomizeApple(fieldSize);
+    let isGood = false;
+    do {
+        apple.yAppleCoord = Math.floor(Math.random() * ((someValue/10-1) - 1)) + 1;
+        apple.xAppleCoord = Math.floor(Math.random() * ((someValue/10-1) - 1)) + 1;
+        isGood = true;
+        for (let i = 1; i < snake.length; i++) {
+            if(apple.xAppleCoord === snake[i].xCoord && apple.yAppleCoord === snake[i].yCoord) {
+                isGood = false;
+                break;
+            }
         }
-    }
+    } while(!isGood)
     mas[apple.yAppleCoord][apple.xAppleCoord] = 3;
 }
 
 randomizeApple(fieldSize);
 
 // Главная функция-обработчик. По нажатию на кнопку старт запускает змейку, следит за направлением,
-// при этом не разрешая двигаться в противоположную сторону. Так же задает условия.
+// при этом не разрешая двигаться в противоположную сторону. Плюс задает условия.
 
 let checker = true;
 
-document.querySelector(".start-button").onclick = function startSnake() {
-    
+document.querySelector('.start-button').onclick = function startSnake() {
     // вызвать CountPoints разрешаем только один раз, в дальнейшем она будет вызываться при поедании яблока
     
     if(checker) {
@@ -238,33 +220,33 @@ document.querySelector(".start-button").onclick = function startSnake() {
         checker = false;
     }
     
-    if (directions[0] == undefined) {
+    if (directions[0] === undefined) {
         directions = [0, 0, 1, 0];
         return;
     }
     
     let checkerDirection = true; // дает определить направление движения только один раз за такт
-    document.body.onkeydown = function catchDirecton (event) {
+    document.onkeydown = function catchDirecton (event) {
         if(!checkerDirection){
             return;
         }
         checkerDirection = false;
-        if(event.keyCode == 37 && previousKeyKode != 39) {
+        if(event.keyCode === 37 && previousKeyKode != 39) {
             directions = [1,0,0,0]; previousKeyKode = 37;
         } else if(event.keyCode == 37 && previousKeyKode == 39) {
             directions = [0,0,1,0];
         }
-        if(event.keyCode == 38 && previousKeyKode != 40) {
+        if(event.keyCode === 38 && previousKeyKode != 40) {
             directions = [0,1,0,0]; previousKeyKode = 38;
         } else if(event.keyCode == 38 && previousKeyKode == 40) {
             directions = [0,0,0,1];
         }
-        if(event.keyCode == 39 && previousKeyKode != 37) {
+        if(event.keyCode === 39 && previousKeyKode != 37) {
             directions = [0,0,1,0]; previousKeyKode = 39;
         } else if(event.keyCode == 39 && previousKeyKode == 37) {
             directions = [1,0,0,0];
         }
-        if(event.keyCode == 40 && previousKeyKode != 38) {
+        if(event.keyCode === 40 && previousKeyKode != 38) {
             directions = [0,0,0,1]; previousKeyKode = 40;
         } else if(event.keyCode == 40 && previousKeyKode == 38) {
             directions = [0,1,0,0];
@@ -272,7 +254,7 @@ document.querySelector(".start-button").onclick = function startSnake() {
     };
     moveSnake(fieldSize);
 //ГРАНИЧНЫЕ УСЛОВИЯ
-    if(snake[0].yCoord == fieldSize/10-1 || snake[0].yCoord == 0 || snake[0].xCoord == fieldSize/10-1 || snake[0].xCoord == 0) {
+    if(snake[0].yCoord === fieldSize/10-1 || snake[0].yCoord === 0 || snake[0].xCoord == fieldSize/10-1 || snake[0].xCoord == 0) {
         field(fieldSize);
         createSnake(fieldSize);
         randomizeApple(fieldSize);
@@ -283,13 +265,13 @@ document.querySelector(".start-button").onclick = function startSnake() {
         return;
     }
 //ЕДИМ ЯБЛОКИ И РАНДОМАЙЗИМ НОВЫЕ
-    if(snake[0].yCoord == apple.yAppleCoord && snake[0].xCoord == apple.xAppleCoord){
+    if(snake[0].yCoord === apple.yAppleCoord && snake[0].xCoord === apple.xAppleCoord){
         addSnakeBlock(snake[0].yPrevCoord, snake[0].xPrevCoord);
         randomizeApple(fieldSize);
     }
 //УСЛОВИЯ НЕПРОНИЦАЕМОСТИ ХВОСТА
     for(let i = 4; i < snake.length; i++) {
-        if(snake[0].xCoord == snake[i].xCoord && snake[0].yCoord == snake[i].yCoord) {
+        if(snake[0].xCoord === snake[i].xCoord && snake[0].yCoord === snake[i].yCoord) {
             field(fieldSize);
             createSnake(fieldSize);
             randomizeApple(fieldSize);
@@ -310,30 +292,32 @@ function checkAndDraw (someValue) {
     ctx.clearRect(0, 0, someValue, someValue);
     for(let i = 0; i < someValue/10; i++) {
         for (let j = 0; j < someValue/10; j++) {
-            if(mas[i][j] == 0) {
+            if(mas[i][j] === 0) {
                 ctx.beginPath();
-                ctx.strokeStyle = "rgb(175, 175, 175)";
+                ctx.strokeStyle = 'rgb(214, 214, 214)';
+                ctx.fillStyle = "#dddddd";
                 ctx.rect(j * 10, i * 10, 10, 10);
-                ctx.closePath();
-                ctx.stroke();
-            } else if(mas[i][j] == 1) {
-                ctx.clearRect(j * 10, i * 10, 10, 10);
-                ctx.beginPath();
-                ctx.fillStyle = "red";
                 ctx.fillRect(j * 10, i * 10, 10, 10);
                 ctx.closePath();
                 ctx.stroke();
-            } else if(mas[i][j] == 3) {
+            } else if(mas[i][j] === 1) {
                 ctx.clearRect(j * 10, i * 10, 10, 10);
                 ctx.beginPath();
-                ctx.fillStyle = "green";
+                ctx.fillStyle = '#e20909';
                 ctx.fillRect(j * 10, i * 10, 10, 10);
                 ctx.closePath();
                 ctx.stroke();
-            } else if(mas[i][j] == 9) {
+            } else if(mas[i][j] === 3) {
                 ctx.clearRect(j * 10, i * 10, 10, 10);
                 ctx.beginPath();
-                ctx.fillStyle = "#d8cece";
+                ctx.fillStyle = 'green';
+                ctx.fillRect(j * 10, i * 10, 10, 10);
+                ctx.closePath();
+                ctx.stroke();
+            } else if(mas[i][j] === 9) {
+                ctx.clearRect(j * 10, i * 10, 10, 10);
+                ctx.beginPath();
+                ctx.fillStyle = 'rgb(155, 155, 155)';
                 ctx.fillRect(j * 10, i * 10, 10, 10);
                 ctx.closePath();
                 ctx.stroke();
@@ -356,14 +340,14 @@ selectSize.onchange = function() {
     directions = [];
 };
 
-// ПОДСЧЕТ ОЧКОВ И ЭКРАН "GAME OVER"
+// ПОДСЧЕТ ОЧКОВ И ЭКРАН 'GAME OVER'
 
-let spanForLength = document.querySelector(".snakelength");
-let spanForPoints = document.querySelector(".points");
-let gameoverScreen = document.querySelector(".gameover-screen");
+let spanForLength = document.querySelector('.snakelength');
+let spanForPoints = document.querySelector('.points');
+let gameoverScreen = document.querySelector('.gameover-screen');
 
 function showGameover () {
-    gameoverScreen.style.display = "flex";
+    gameoverScreen.style.display = 'flex';
 }
 
 function statsCollector () {
@@ -373,6 +357,14 @@ function statsCollector () {
     points = 0;
 }
 
-document.querySelector(".close-gameover").onclick = ()=> {
-    gameoverScreen.style.display = "none";
-}
+document.querySelector('.close-gameover').onclick = ()=> gameoverScreen.style.display = 'none'
+
+
+// ПЛАН
+// 1 добавить продвинутую статистику для начала локалСторадж потом бэкенд
+// 2 прорезинить верстку
+// 3 сделать возможной игру с телефона
+// 4 (добавить паузу)
+// 5 переделать рандомайзер: добавить массив всех квадратов с координатами и флагом 
+//   наличия змейки в квадрате.
+// 6 пересмотреть дизайн
